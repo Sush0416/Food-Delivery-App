@@ -17,7 +17,7 @@ if (!stripeKey) {
 const stripePromise = loadStripe(stripeKey as string);
 
 // --- CheckoutForm Component ---
-const CheckoutForm: React.FC<{ finalTotal: number }> = ({ finalTotal }) => {
+const CheckoutForm: React.FC<{ finalTotal: number; deliveryAddress: any }> = ({ finalTotal, deliveryAddress }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { items, clearCart } = useCartStore();
@@ -42,7 +42,7 @@ const CheckoutForm: React.FC<{ finalTotal: number }> = ({ finalTotal }) => {
           },
           body: JSON.stringify({
             amount: Math.round(finalTotal * 100), // in cents
-            currency: 'usd',
+          currency: 'inr',
             metadata: { userId: user._id },
           }),
         });
@@ -140,10 +140,97 @@ const CheckoutForm: React.FC<{ finalTotal: number }> = ({ finalTotal }) => {
         {loading ? (
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
         ) : (
-          `Pay $${finalTotal.toFixed(2)}`
+          `Pay ₹${finalTotal.toFixed(2)}`
         )}
       </button>
     </form>
+  );
+};
+
+// --- DeliveryAddressForm Component ---
+const DeliveryAddressForm: React.FC<{ onAddressChange: (address: any) => void }> = ({ onAddressChange }) => {
+  const { user } = useAuth();
+  const [address, setAddress] = useState({
+    street: user?.address?.street || '',
+    city: user?.address?.city || '',
+    state: user?.address?.state || '',
+    country: user?.address?.country || '',
+    zipCode: user?.address?.zipCode || '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const newAddress = { ...address, [name]: value };
+    setAddress(newAddress);
+    onAddressChange(newAddress);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Delivery Address</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+          <input
+            type="text"
+            name="street"
+            value={address.street}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            placeholder="123 Main Street"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
+          <input
+            type="text"
+            name="city"
+            value={address.city}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            placeholder="New York"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+          <input
+            type="text"
+            name="state"
+            value={address.state}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            placeholder="NY"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+          <input
+            type="text"
+            name="country"
+            value={address.country}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            placeholder="United States"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+          <input
+            type="text"
+            name="zipCode"
+            value={address.zipCode}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            placeholder="10001"
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -152,6 +239,7 @@ const Checkout: React.FC = () => {
   const { items, total } = useCartStore();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [deliveryAddress, setDeliveryAddress] = useState<any>(null);
 
   // Redirect if no items or user not logged in
   useEffect(() => {
@@ -170,8 +258,8 @@ const Checkout: React.FC = () => {
     );
   }
 
-  const deliveryFee = 2.99;
-  const taxRate = 0.08;
+  const deliveryFee = 249;
+  const taxRate = 0.18;
   const taxAmount = total * taxRate;
   const finalTotal = total + deliveryFee + taxAmount;
 
@@ -183,18 +271,19 @@ const Checkout: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
+            <DeliveryAddressForm onAddressChange={setDeliveryAddress} />
             <Elements stripe={stripePromise}>
-              <CheckoutForm finalTotal={finalTotal} />
+              <CheckoutForm finalTotal={finalTotal} deliveryAddress={deliveryAddress} />
             </Elements>
           </div>
 
           <div className="lg:col-span-1 bg-white rounded-lg shadow-md p-6 sticky top-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h3>
             <div className="space-y-2">
-              <div className="flex justify-between"><span>Subtotal</span><span>${total.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span>Delivery</span><span>${deliveryFee.toFixed(2)}</span></div>
-              <div className="flex justify-between"><span>Tax</span><span>${taxAmount.toFixed(2)}</span></div>
-              <div className="flex justify-between pt-2 font-semibold border-t"><span>Total</span><span className="text-orange-500">${finalTotal.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Subtotal</span><span>₹{total.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Delivery</span><span>₹{deliveryFee.toFixed(2)}</span></div>
+              <div className="flex justify-between"><span>Tax</span><span>₹{taxAmount.toFixed(2)}</span></div>
+              <div className="flex justify-between pt-2 font-semibold border-t"><span>Total</span><span className="text-orange-500">₹{finalTotal.toFixed(2)}</span></div>
             </div>
             <div className="mt-4 p-3 bg-orange-50 rounded-lg flex items-center">
               <Clock className="h-5 w-5 text-orange-500 mr-2" />

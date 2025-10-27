@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Search, Filter, Star, MapPin, Heart, Zap, Award, ChevronDown, X, 
+import {
+  Search, Filter, Star, MapPin, Heart, Zap, ChevronDown, X,
   Clock, IndianRupee, Users, Sparkles, Crown, Truck, Shield, Leaf
 } from 'lucide-react'
 import { Restaurant } from '../types'
+import { sampleRestaurants } from '../data/sampleData'
 
 // Indian cities for filtering
 const INDIAN_CITIES = [
@@ -53,15 +54,7 @@ const Restaurants: React.FC = () => {
     { id: 'organic', label: 'Organic', icon: '🌱' }
   ]
 
-  // Sample Indian restaurant images (in real app, these would come from your database)
-  const indianRestaurantImages = [
-    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=500&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=500&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&h=300&fit=crop'
-  ]
+
 
   useEffect(() => {
     fetchIndianRestaurants()
@@ -75,160 +68,7 @@ const Restaurants: React.FC = () => {
     try {
       setLoading(true)
       // In production, this would be an API call
-      // For now, we'll use sample Indian restaurant data
-      const sampleRestaurants: Restaurant[] = [
-        {
-          _id: '1',
-          name: 'Spice Garden',
-          description: 'Authentic North Indian cuisine with traditional recipes passed down through generations',
-          address: {
-            street: 'MG Road',
-            city: 'Mumbai',
-            state: 'Maharashtra',
-            country: 'India',
-            zipCode: '400001'
-          },
-          cuisines: ['North Indian', 'Mughlai', 'Tandoori'],
-          rating: 4.5,
-          deliveryTime: 30,
-          minOrder: 200,
-          contact: {
-            phone: '+91-9876543210',
-            email: 'info@spicegarden.com'
-          },
-          isActive: true,
-          createdBy: '1',
-          createdAt: new Date().toISOString(),
-          features: ['pure-veg', 'family', 'premium'],
-          image: indianRestaurantImages[0]
-        },
-        {
-          _id: '2',
-          name: 'Dakshin Delights',
-          description: 'Traditional South Indian meals served on banana leaves with authentic flavors',
-          address: {
-            street: 'Brigade Road',
-            city: 'Bangalore',
-            state: 'Karnataka',
-            country: 'India',
-            zipCode: '560001'
-          },
-          cuisines: ['South Indian', 'Andhra', 'Vegetarian'],
-          rating: 4.7,
-          deliveryTime: 25,
-          minOrder: 150,
-          contact: {
-            phone: '+91-9876543211',
-            email: 'hello@dakshindelights.com'
-          },
-          isActive: true,
-          createdBy: '1',
-          createdAt: new Date().toISOString(),
-          features: ['pure-veg', 'healthy', 'budget'],
-          image: indianRestaurantImages[1]
-        },
-        {
-          _id: '3',
-          name: 'Royal Biryani House',
-          description: 'Famous for Hyderabad-style biryanis and authentic Mughlai cuisine',
-          address: {
-            street: 'Hitech City',
-            city: 'Hyderabad',
-            state: 'Telangana',
-            country: 'India',
-            zipCode: '500081'
-          },
-          cuisines: ['Biryani', 'Mughlai', 'Non-Veg'],
-          rating: 4.8,
-          deliveryTime: 35,
-          minOrder: 250,
-          contact: {
-            phone: '+91-9876543212',
-            email: 'orders@royalbiryani.com'
-          },
-          isActive: true,
-          createdBy: '1',
-          createdAt: new Date().toISOString(),
-          features: ['non-veg', 'premium', 'family'],
-          image: indianRestaurantImages[2]
-        },
-        {
-          _id: '4',
-          name: 'Gujarati Thali',
-          description: 'Unlimited Gujarati thali with homemade taste and traditional flavors',
-          address: {
-            street: 'CG Road',
-            city: 'Ahmedabad',
-            state: 'Gujarat',
-            country: 'India',
-            zipCode: '380009'
-          },
-          cuisines: ['Gujarati', 'Vegetarian', 'Street Food'],
-          rating: 4.6,
-          deliveryTime: 20,
-          minOrder: 180,
-          contact: {
-            phone: '+91-9876543213',
-            email: 'thali@gujaratithali.com'
-          },
-          isActive: true,
-          createdBy: '1',
-          createdAt: new Date().toISOString(),
-          features: ['pure-veg', 'budget', 'family'],
-          image: indianRestaurantImages[3]
-        },
-        {
-          _id: '5',
-          name: 'Kerala Spice Route',
-          description: 'Authentic Kerala cuisine with coastal flavors and seafood specialties',
-          address: {
-            street: 'Marine Drive',
-            city: 'Kochi',
-            state: 'Kerala',
-            country: 'India',
-            zipCode: '682001'
-          },
-          cuisines: ['Kerala', 'Seafood', 'Non-Veg'],
-          rating: 4.4,
-          deliveryTime: 40,
-          minOrder: 300,
-          contact: {
-            phone: '+91-9876543214',
-            email: 'kerala@spiceroute.com'
-          },
-          isActive: true,
-          createdBy: '1',
-          createdAt: new Date().toISOString(),
-          features: ['non-veg', 'seafood', 'premium'],
-          image: indianRestaurantImages[4]
-        },
-        {
-          _id: '6',
-          name: 'Rajasthan Royal Kitchen',
-          description: 'Royal Rajasthani thali with authentic desert flavors and traditional recipes',
-          address: {
-            street: 'MI Road',
-            city: 'Jaipur',
-            state: 'Rajasthan',
-            country: 'India',
-            zipCode: '302001'
-          },
-          cuisines: ['Rajasthani', 'Vegetarian', 'North Indian'],
-          rating: 4.9,
-          deliveryTime: 30,
-          minOrder: 220,
-          contact: {
-            phone: '+91-9876543215',
-            email: 'royal@rajasthankitchen.com'
-          },
-          isActive: true,
-          createdBy: '1',
-          createdAt: new Date().toISOString(),
-          features: ['pure-veg', 'premium', 'family'],
-          image: indianRestaurantImages[5]
-        }
-      ]
-
+      // For now, we'll use sample restaurant data from the imported file
       setRestaurants(sampleRestaurants)
     } catch (error) {
       setError('Failed to load restaurants. Please try again.')
@@ -752,7 +592,7 @@ const Restaurants: React.FC = () => {
 
 // Enhanced Indian Restaurant Card Component
 interface IndianRestaurantCardProps {
-  restaurant: Restaurant & { features?: string[]; image?: string }
+  restaurant: Restaurant
   viewMode: 'grid' | 'list'
   isFavorite: boolean
   onToggleFavorite: (restaurantId: string) => void
@@ -767,7 +607,7 @@ const IndianRestaurantCard: React.FC<IndianRestaurantCardProps> = ({
   const navigate = useNavigate()
 
   const handleViewMenu = () => {
-    navigate(`/restaurant/${restaurant._id}`)
+    navigate(`/restaurant/${restaurant._id}/menu`)
   }
 
   const getPriceLevel = (minOrder: number) => {
@@ -798,11 +638,19 @@ const IndianRestaurantCard: React.FC<IndianRestaurantCardProps> = ({
       <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6">
         <div className="flex items-start space-x-4">
           {/* Restaurant Image */}
-          <div className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden">
-            <img 
-              src={restaurant.image} 
+          <div className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center">
+            <img
+              src={restaurant.image}
               alt={restaurant.name}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = '<div class="text-2xl">🍛</div>';
+                }
+              }}
             />
           </div>
 
@@ -881,11 +729,19 @@ const IndianRestaurantCard: React.FC<IndianRestaurantCardProps> = ({
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       {/* Restaurant Image */}
-      <div className="relative h-48 bg-gradient-to-br from-orange-100 to-red-100">
-        <img 
-          src={restaurant.image} 
+      <div className="relative h-48 bg-gradient-to-br from-orange-100 to-red-100 flex items-center justify-center overflow-hidden">
+        <img
+          src={restaurant.image}
           alt={restaurant.name}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+            const parent = target.parentElement;
+            if (parent) {
+              parent.innerHTML = '<div class="text-4xl">🍛</div>';
+            }
+          }}
         />
         
         {/* Favorite Button */}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { Users, Utensils, Package, DollarSign, TrendingUp, AlertCircle } from 'lucide-react'
+import { Users, Utensils, Package, DollarSign, AlertCircle } from 'lucide-react'
 
 interface AdminStats {
   totalUsers: number

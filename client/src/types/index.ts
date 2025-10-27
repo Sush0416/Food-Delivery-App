@@ -4,6 +4,14 @@ export interface User {
   email: string
   role: 'customer' | 'restaurant' | 'admin'
   avatar?: string
+  phone?: string
+  address?: {
+    street: string
+    city: string
+    state: string
+    country: string
+    zipCode: string
+  }
   createdAt: string
 }
 
@@ -29,6 +37,8 @@ export interface Restaurant {
   isActive: boolean
   createdBy: string
   createdAt: string
+  image?: string
+  features?: string[]
 }
 
 export interface MenuItem {
@@ -74,6 +84,30 @@ export interface Order {
   paymentMethod: 'card' | 'cash'
   stripePaymentIntentId?: string
   createdAt: string
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  duration: string;
+  mealsPerDay: number;
+  features: string[];
+  type: 'daily' | 'weekly' | 'monthly';
+}
+
+export interface SubscriptionFormData {
+  fullName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  pincode: string;
+  deliveryTime: string;
+  dietaryPreference: string;
+  startDate: string;
+  specialInstructions: string;
 }
 
 export interface AuthContextType {

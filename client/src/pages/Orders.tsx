@@ -120,7 +120,7 @@ const Orders: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="font-medium text-gray-900">Total Amount:</span>
-                      <span className="ml-2">${order.totalAmount.toFixed(2)}</span>
+                      <span className="ml-2">₹{order.totalAmount.toFixed(2)}</span>
                     </div>
                     <div>
                       <span className="font-medium text-gray-900">Payment Status:</span>
@@ -143,7 +143,7 @@ const Orders: React.FC = () => {
                           <span className="text-gray-600 ml-2">x{item.quantity}</span>
                         </div>
                         <span className="font-semibold">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₹{(item.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     ))}

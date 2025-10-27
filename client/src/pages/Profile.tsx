@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { User, User as UserType } from '../types'
+import { User } from '../types'
 
 const Profile: React.FC = () => {
   const { user, logout } = useAuth()

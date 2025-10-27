@@ -152,7 +152,7 @@ const RestaurantMenu: React.FC = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">{category}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {categoryItems.map(item => (
-                    <MenuItemCard key={item._id || item.id} item={item} onAddToCart={addItem} />
+                    <MenuItemCard key={item._id} item={item} onAddToCart={addItem} />
                   ))}
                 </div>
               </div>
@@ -162,7 +162,7 @@ const RestaurantMenu: React.FC = () => {
           // Show filtered items when specific category is selected
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems.map(item => (
-              <MenuItemCard key={item._id || item.id} item={item} onAddToCart={addItem} />
+              <MenuItemCard key={item._id} item={item} onAddToCart={addItem} />
             ))}
           </div>
         )}

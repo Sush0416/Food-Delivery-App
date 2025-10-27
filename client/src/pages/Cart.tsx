@@ -15,7 +15,7 @@ const Cart: React.FC = () => {
       return
     }
     // Proceed to checkout
-    console.log('Proceeding to checkout...')
+    navigate('/checkout')
   }
 
   if (items.length === 0) {
@@ -62,7 +62,7 @@ const Cart: React.FC = () => {
                         {item.menuItem.description}
                       </p>
                       <p className="text-orange-500 font-semibold mt-1">
-                        ${item.menuItem.price.toFixed(2)}
+                        ₹{item.menuItem.price.toFixed(2)}
                       </p>
                     </div>
 
@@ -113,19 +113,19 @@ const Cart: React.FC = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Delivery Fee</span>
-                  <span>$2.99</span>
+                  <span>₹249</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tax</span>
-                  <span>${(total * 0.08).toFixed(2)}</span>
+                  <span>₹{(total * 0.18).toFixed(2)}</span>
                 </div>
                 <div className="border-t pt-3 flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span>${(total + 2.99 + total * 0.08).toFixed(2)}</span>
+                  <span>₹{(total + 249 + total * 0.18).toFixed(2)}</span>
                 </div>
               </div>
 

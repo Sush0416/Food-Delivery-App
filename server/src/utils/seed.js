@@ -41,6 +41,10 @@ const sampleRestaurants = [
       country: 'USA',
       zipCode: '10001'
     },
+    location: {
+      type: 'Point',
+      coordinates: [-74.0060, 40.7128] // New York coordinates
+    },
     cuisines: ['Indian', 'Vegetarian', 'Halal'],
     deliveryTime: 30,
     minOrder: 15,
@@ -59,6 +63,10 @@ const sampleRestaurants = [
       state: 'NY',
       country: 'USA',
       zipCode: '10002'
+    },
+    location: {
+      type: 'Point',
+      coordinates: [-74.0060, 40.7128] // New York coordinates
     },
     cuisines: ['Italian', 'Pizza', 'Fast Food'],
     deliveryTime: 25,
@@ -79,6 +87,10 @@ const sampleRestaurants = [
       country: 'USA',
       zipCode: '10003'
     },
+    location: {
+      type: 'Point',
+      coordinates: [-74.0060, 40.7128] // New York coordinates
+    },
     cuisines: ['Home-style', 'Vegetarian', 'Healthy'],
     deliveryTime: 35,
     minOrder: 8,
@@ -95,7 +107,7 @@ const sampleMenuItems = [
   {
     name: 'Butter Chicken',
     description: 'Tender chicken in a rich buttery tomato sauce',
-    price: 16.99,
+    price: 279,
     category: 'Main Course',
     isVegetarian: false,
     spiceLevel: 'medium'
@@ -103,7 +115,7 @@ const sampleMenuItems = [
   {
     name: 'Paneer Tikka',
     description: 'Grilled cottage cheese with spices and vegetables',
-    price: 14.99,
+    price: 239,
     category: 'Appetizer',
     isVegetarian: true,
     spiceLevel: 'mild'
@@ -111,7 +123,7 @@ const sampleMenuItems = [
   {
     name: 'Vegetable Biryani',
     description: 'Fragrant rice with mixed vegetables and spices',
-    price: 12.99,
+    price: 119,
     category: 'Main Course',
     isVegetarian: true,
     spiceLevel: 'medium'
@@ -120,14 +132,14 @@ const sampleMenuItems = [
   {
     name: 'Margherita Pizza',
     description: 'Classic pizza with tomato sauce, mozzarella, and basil',
-    price: 14.99,
+    price: 299,
     category: 'Pizza',
     isVegetarian: true
   },
   {
     name: 'Pepperoni Pizza',
     description: 'Pizza with pepperoni and mozzarella cheese',
-    price: 16.99,
+    price: 349,
     category: 'Pizza',
     isVegetarian: false
   },
@@ -135,14 +147,14 @@ const sampleMenuItems = [
   {
     name: 'Daily Tiffin Special',
     description: 'Rotating menu of home-style dishes with rice and bread',
-    price: 8.99,
+    price: 119,
     category: 'Tiffin',
     isVegetarian: true
   },
   {
     name: 'Healthy Bowl',
     description: 'Quinoa with roasted vegetables and protein of choice',
-    price: 10.99,
+    price: 199,
     category: 'Healthy',
     isVegetarian: false
   }
@@ -162,11 +174,7 @@ const seedDatabase = async () => {
     // Create users
     const createdUsers = []
     for (const userData of sampleUsers) {
-      const hashedPassword = await bcrypt.hash(userData.password, 12)
-      const user = await User.create({
-        ...userData,
-        password: hashedPassword
-      })
+      const user = await User.create(userData)
       createdUsers.push(user)
       console.log(`Created user: ${user.name}`)
     }

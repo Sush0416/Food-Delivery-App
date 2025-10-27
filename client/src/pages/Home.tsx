@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Search, Utensils, Truck, Star, Shield } from 'lucide-react'
+import { Utensils, Truck, Star, Shield } from 'lucide-react'
 
 const Home: React.FC = () => {
   const { user } = useAuth()
