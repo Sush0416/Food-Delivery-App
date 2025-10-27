@@ -300,7 +300,7 @@ const TiffinServices: React.FC = () => {
           >
           Subscribe to {selectedPlan} Plan
           </button>
-        </div>
+      </div>
 
         </div>
 
