@@ -1,323 +1,283 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  Calendar,
-  Clock,
   Utensils,
-  CheckCircle,
-  Truck,
-  Zap,
+  Shield,
   Star,
-  Award,
-  Shield
-} from 'lucide-react';
+  Gift,
+  CreditCard,
+  Wallet,
+} from "lucide-react";
 
 const MonthlyPlanSubscription: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const service = location.state?.service;
+
+  // ✅ Default fallback if service data missing
+  const service =
+    location.state?.service || {
+      name: "Tiffin Service",
+      description: "Delicious home-style meals delivered daily",
+    };
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    pincode: '',
-    deliveryTime: '12:00-14:00',
-    dietaryPreference: 'vegetarian',
-    startDate: new Date().toISOString().split('T')[0],
-    specialInstructions: ''
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    pincode: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("credit");
 
-  // ✅ Monthly plan details
   const planDetails = {
-    name: 'Monthly Plan',
+    name: "Monthly Plan",
     pricePerMeal: 79,
+    duration: "30 days (4 days free)",
     mealsPerDay: 2,
-    paidDays: 26, // 4 days free
-    totalDays: 30,
     gstRate: 0.05,
-    description: 'Most popular — 4 days free with every month!',
-    features: [
-      '2 meals per day (Lunch + Dinner)',
-      'Free delivery all month',
-      '4 days free every month',
-      'Priority support',
-      'Advanced customization options',
-      'Monthly menu planning',
-      'Cancel anytime after renewal period'
-    ]
   };
 
-  // ✅ Price calculation
   const calculateTotal = () => {
-    const basePrice = planDetails.pricePerMeal * planDetails.mealsPerDay * planDetails.paidDays;
-    const gst = basePrice * planDetails.gstRate;
-    const total = basePrice + gst;
-    const freeDaysValue = planDetails.pricePerMeal * planDetails.mealsPerDay * 4;
-    return { basePrice, gst, total, freeDaysValue };
+    const days = 30;
+    const basePrice = planDetails.pricePerMeal * planDetails.mealsPerDay * days;
+    const tax = basePrice * planDetails.gstRate;
+    return { basePrice, tax, total: basePrice + tax };
   };
 
   const totals = calculateTotal();
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  // ✅ Validate and proceed
+  const handleProceedToPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const required = ["fullName", "email", "phone", "address", "city", "pincode"];
+    for (const field of required) {
+      if (!formData[field as keyof typeof formData]?.trim()) {
+        alert("⚠️ Please fill all required fields before proceeding.");
+        return;
+      }
+    }
+
+    // ✅ show payment section
+    setShowPayment(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // ✅ Simulate payment + pass state
+  const handlePayment = () => {
     setIsSubmitting(true);
-
     setTimeout(() => {
-      setIsSubmitting(false);
-      navigate('/subscription-success', {
-        state: { service, selectedPlan: 'monthly', planDetails, formData, totals }
+      const dataToSend = {
+        service,
+        selectedPlan: "Monthly",
+        planDetails,
+        formData,
+        totals,
+        paymentMethod,
+      };
+
+      // store in localStorage (optional)
+      localStorage.setItem("subscriptionData", JSON.stringify(dataToSend));
+
+      // ✅ safely navigate with full data
+      navigate("/subscription-checkout", {
+        state: dataToSend,
       });
-    }, 2000);
+    }, 1500);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-white">
-      <div className="max-w-5xl mx-auto px-4 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-cyan-50 to-white">
+      <div className="max-w-6xl mx-auto px-4 py-10">
+        {/* 🎁 Offer Banner */}
+        <div className="bg-gradient-to-r from-sky-600 to-cyan-500 text-white p-4 rounded-2xl shadow-md mb-8 flex items-center justify-center gap-3">
+          <Gift className="h-6 w-6 text-yellow-300" />
+          <p className="text-lg font-semibold">
+            🎉 Special Offer: Get 4 Days FREE on your Monthly Plan!
+          </p>
+        </div>
+
+        {/* 🌟 Price Summary Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <div className="flex flex-col items-center bg-blue-100 border border-blue-200 rounded-xl py-3 shadow-sm">
+            <Star className="h-5 w-5 text-blue-600 mb-1" />
+            <p className="text-sm text-gray-600">Price per Meal</p>
+            <p className="text-lg font-semibold text-blue-700">₹79</p>
+          </div>
+          <div className="flex flex-col items-center bg-indigo-50 border border-indigo-200 rounded-xl py-3 shadow-sm">
+            <Utensils className="h-5 w-5 text-indigo-600 mb-1" />
+            <p className="text-sm text-gray-600">Meals per Day</p>
+            <p className="text-lg font-semibold text-indigo-700">2</p>
+          </div>
+          <div className="flex flex-col items-center bg-cyan-50 border border-cyan-200 rounded-xl py-3 shadow-sm">
+            <Shield className="h-5 w-5 text-cyan-600 mb-1" />
+            <p className="text-sm text-gray-600">GST</p>
+            <p className="text-lg font-semibold text-cyan-700">5%</p>
+          </div>
+          <div className="flex flex-col items-center bg-sky-50 border border-sky-200 rounded-xl py-3 shadow-sm">
+            <Gift className="h-5 w-5 text-sky-600 mb-1" />
+            <p className="text-sm text-gray-600">Special Offer</p>
+            <p className="text-lg font-semibold text-sky-700">4 Days Free 🎁</p>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => navigate(-1)}
             className="flex items-center text-gray-600 hover:text-gray-900 transition"
           >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Back
+            <ArrowLeft className="h-5 w-5 mr-2" /> Back
           </button>
-          <h1 className="text-3xl font-bold text-gray-900 mt-3">Monthly Plan Subscription</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mt-3">
+            Monthly Plan Subscription
+          </h1>
           <p className="text-gray-600">
-            Enjoy 30 days of delicious, fresh meals with 4 days absolutely free!
+            Enjoy 30 days of home-style meals with 4 free days & dedicated support.
           </p>
         </div>
 
-        {/* 🌟 Price Summary Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="flex items-center justify-center bg-sky-50 border border-sky-200 rounded-xl py-3 shadow-sm">
-            <div className="flex items-center space-x-2">
-              <Star className="h-5 w-5 text-sky-600" />
-              <div className="text-center">
-                <p className="text-sm text-gray-600">Price per Meal</p>
-                <p className="text-lg font-semibold text-sky-700">₹79</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center bg-green-50 border border-green-200 rounded-xl py-3 shadow-sm">
-            <div className="flex items-center space-x-2">
-              <Utensils className="h-5 w-5 text-green-600" />
-              <div className="text-center">
-                <p className="text-sm text-gray-600">Meals per Day</p>
-                <p className="text-lg font-semibold text-green-700">2</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center bg-yellow-50 border border-yellow-200 rounded-xl py-3 shadow-sm">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-5 w-5 text-yellow-600" />
-              <div className="text-center">
-                <p className="text-sm text-gray-600">GST</p>
-                <p className="text-lg font-semibold text-yellow-700">5%</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left: Form */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Personal Information</h2>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
+        {/* FORM + PAYMENT */}
+        {!showPayment ? (
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 max-w-2xl mx-auto">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              Personal Information
+            </h2>
+            <form onSubmit={handleProceedToPayment} className="space-y-6">
               {[
-                { label: 'Full Name', name: 'fullName', type: 'text' },
-                { label: 'Email Address', name: 'email', type: 'email' },
-                { label: 'Phone Number', name: 'phone', type: 'tel' }
+                { label: "Full Name", name: "fullName", type: "text" },
+                { label: "Email Address", name: "email", type: "email" },
+                { label: "Phone Number", name: "phone", type: "tel" },
               ].map((field) => (
                 <div key={field.name}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {field.label} *
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {field.label}
                   </label>
                   <input
                     {...field}
-                    required
                     value={(formData as any)[field.name]}
                     onChange={handleInputChange}
+                    placeholder={`Enter ${field.label}`}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none"
                   />
                 </div>
               ))}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Address *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Delivery Address
+                </label>
                 <textarea
                   name="address"
                   rows={3}
-                  required
                   value={formData.address}
                   onChange={handleInputChange}
+                  placeholder="Enter your full address"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    City
+                  </label>
                   <input
                     name="city"
-                    required
                     value={formData.city}
                     onChange={handleInputChange}
+                    placeholder="City"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Pincode *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Pincode
+                  </label>
                   <input
                     name="pincode"
-                    required
                     value={formData.pincode}
                     onChange={handleInputChange}
+                    placeholder="Pincode"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Delivery Time *</label>
-                  <select
-                    name="deliveryTime"
-                    required
-                    value={formData.deliveryTime}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
-                  >
-                    <option value="12:00-14:00">12:00 PM - 2:00 PM</option>
-                    <option value="18:00-20:00">6:00 PM - 8:00 PM</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Dietary Preference *
-                  </label>
-                  <select
-                    name="dietaryPreference"
-                    required
-                    value={formData.dietaryPreference}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
-                  >
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="non-vegetarian">Non-Vegetarian</option>
-                    <option value="vegan">Vegan</option>
-                    <option value="jain">Jain</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Start Date *</label>
-                <input
-                  type="date"
-                  name="startDate"
-                  required
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Special Instructions</label>
-                <textarea
-                  name="specialInstructions"
-                  rows={3}
-                  value={formData.specialInstructions}
-                  onChange={handleInputChange}
-                  placeholder="Any special dietary requests?"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500"
-                />
               </div>
 
               <button
                 type="submit"
-                disabled={isSubmitting}
                 className="w-full bg-sky-600 text-white py-3 rounded-lg font-semibold hover:bg-sky-700 transition-all"
               >
-                {isSubmitting ? 'Processing...' : `Subscribe Now - ₹${totals.total.toFixed(2)}`}
+                Proceed to Payment – ₹{totals.total.toFixed(2)}
               </button>
             </form>
           </div>
-
-          {/* Right: Summary */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center mb-4">
-                <Calendar className="h-6 w-6 text-sky-500 mr-3" />
-                <h3 className="text-lg font-semibold text-gray-900">{planDetails.name}</h3>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between border-b pb-2">
-                  <span className="text-gray-600">Duration</span>
-                  <span className="font-medium">{planDetails.totalDays} Days</span>
-                </div>
-                <div className="flex justify-between border-b pb-2 text-green-600 font-semibold">
-                  <span>4 Days Free</span>
-                  <span>-₹{totals.freeDaysValue.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="text-gray-900 font-medium">₹{totals.basePrice.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">GST (5%)</span>
-                  <span className="text-gray-900 font-medium">₹{totals.gst.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-lg font-bold border-t pt-2">
-                  <span className="text-gray-900">Total</span>
-                  <span className="text-sky-600">₹{totals.total.toFixed(2)}</span>
-                </div>
-              </div>
+        ) : (
+          // 💳 Payment Section
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 max-w-xl mx-auto">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">
+              Select Payment Method
+            </h2>
+            <div className="space-y-4">
+              {[
+                {
+                  label: "Credit / Debit Card",
+                  value: "credit",
+                  icon: <CreditCard className="h-5 w-5 text-sky-600" />,
+                },
+                {
+                  label: "UPI / Wallet",
+                  value: "upi",
+                  icon: <Wallet className="h-5 w-5 text-green-600" />,
+                },
+                {
+                  label: "Cash on Delivery",
+                  value: "cod",
+                  icon: <Shield className="h-5 w-5 text-orange-600" />,
+                },
+              ].map((method) => (
+                <label
+                  key={method.value}
+                  className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer ${
+                    paymentMethod === method.value
+                      ? "border-sky-500 bg-sky-50"
+                      : "border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value={method.value}
+                    checked={paymentMethod === method.value}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  {method.icon}
+                  <span className="font-medium text-gray-700">
+                    {method.label}
+                  </span>
+                </label>
+              ))}
             </div>
 
-            <div className="bg-sky-50 rounded-2xl p-4">
-              <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                <Zap className="h-4 w-4 mr-2 text-sky-500" /> What's Included
-              </h4>
-              <ul className="space-y-2 text-sm text-gray-700">
-                {planDetails.features.map((feature, index) => (
-                  <li key={index} className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2" /> {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
-              <div className="flex items-center mb-2">
-                <Award className="h-5 w-5 text-green-600 mr-2" />
-                <h4 className="font-semibold text-green-900">Your Savings</h4>
-              </div>
-              <p className="text-sm text-green-700">
-                Save ₹{totals.freeDaysValue.toFixed(2)} with 4 days free — enjoy 30 days for the price of 26!
-              </p>
-            </div>
+            <button
+              onClick={handlePayment}
+              disabled={isSubmitting}
+              className="mt-6 w-full bg-sky-600 text-white py-3 rounded-lg font-semibold hover:bg-sky-700 transition-all"
+            >
+              {isSubmitting
+                ? "Processing Payment..."
+                : `Pay ₹${totals.total.toFixed(2)}`}
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

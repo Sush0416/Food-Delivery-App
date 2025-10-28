@@ -267,9 +267,9 @@ const TiffinServiceDetail: React.FC = () => {
       console.log('Service data:', service);
 
       const planRoutes = {
-        daily: '/daily-plan',
-        weekly: '/weekly-plan',
-        monthly: '/monthly-plan'
+        daily: '/subscription/daily',
+        weekly: '/subscription/weekly',
+        monthly: '/subscription/monthly'
       };
 
       const route = planRoutes[selectedPlan];
